@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.1'
 
 services:
     testdb_mysql:
@@ -7,31 +7,30 @@ services:
             dockerfile: Dockerfile.mariadb
         image: testdb_mysql
         restart: always
-        command: --default-authentication-plugin=mysql_native_password --local-infile --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci 
+        command: --default-authentication-plugin=mysql_native_password --local-infile --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
         environment:
             MYSQL_ROOT_PASSWORD: example
             MYSQL_USER: user
             MYSQL_PASSWORD: password
             MYSQL_DATABASE: ICFES
-            MYSQL_TCP_PORT: 3307
             LANG: C.UTF-8 # sets the encoding in the init.db scripts which are otherwise assumed to be ascii
         ports:
-            - "3307:3307"
+            - "3306:3306"
         container_name: testdb_mysql
         volumes:
-            - /opt/mysql_data:/var/lib/mysql #cambiado
+            - ./schema:/var/lib/mysql
+
 
     dash:
         build:
             context: .
             dockerfile: Dockerfile.dash
         container_name: dash_proyecto
+        command: python proyecto.py
         volumes:
         - .:/code
-        command: python proyecto.py
         ports:
-            - "8080:8080"
+        - "8080:8080"
         depends_on:
-        - testdb_mysql
-
-
+            testdb_mysql:
+                condition: service_started
