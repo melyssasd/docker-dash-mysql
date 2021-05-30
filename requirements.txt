@@ -1,0 +1,6 @@
+pandas
+numpy
+mysql-connector-python
+dash==1.11.0
+Jupyterlab
+jupyter-dash
